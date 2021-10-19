@@ -13,7 +13,10 @@ const manageJwtToken = {
         const token = localStorage.getItem(key)
         const decoded = Jwt.decode(token)
         return decoded?.data
-    }  
+    } ,
+    removeTokenFromLocalStorage(){
+       this.saveTokenToLocalStorage("--")
+    } 
 }
 
 export default  manageJwtToken 

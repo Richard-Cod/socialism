@@ -1,95 +1,36 @@
 import React from 'react'
-import manageJwtToken from '../utils/manageJwtToken'
-import { MenuIcon } from '@heroicons/react/solid'
+import manageJwtToken from '../app/utils/manageJwtToken'
 import { UserCircleIcon } from '@heroicons/react/solid'
 import { UserGroupIcon } from '@heroicons/react/solid'
 import { PhotographIcon } from '@heroicons/react/solid'
 import { ShareIcon } from '@heroicons/react/solid'
 import { HeartIcon } from '@heroicons/react/solid'
+import Router from 'next/dist/client/router'
 
-function MobileButtonNav({...props}) {
-    const [showContent, setshowContent] = React.useState(false)
-    const element = [
-        {name : "Home" , url : "/home"},
-        {name : "Profile" , url : "/profile"},
-        {name : "Log out" , url : "/profile"},
-    ]
-    return (
-        <div style={{
-        }} className="relative  text-left md:hidden  ">
-    <div>
-        <button onClick={() => setshowContent(!showContent)} type="button" className=" bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center  rounded-md  px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500 ml-auto" id="options-menu">
-             <MenuIcon className="h-5 w-5"/> 
-        </button>
-    </div>
-    <div className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5"
-    style={{
-        display : showContent ? "block" : "none"
-    }}>
-        
-        <div  className="py-1 " role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            
-            {element.map((value) => 
-            <a href="#" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
-            <span className="flex flex-col">
-                <span>
-                    {value.name} 
-                </span>
-            </span>
-        </a>
-        )}
-        </div>
-
-    </div>
-</div>
-    )
-}
-
-function NavBar() {
-    return (
-        <nav className="bg-gray-100 py-5 px-10 flex">
-
-            <div>
-             <h1 className="border-solid border-2">DayDay</h1>
-            </div>
-            <div className="menu  ml-auto  w-1/2 ">
-
-                <ul className="hidden justify-between md:flex">
-                    <li>Profile</li>
-                    <li>Home</li>
-                    <li>Pages</li>
-                    <li>Deconnexion</li>
-                </ul>
-
-                <MobileButtonNav />
-
-            </div>
-
-            
-        </nav>
-    )
-}
+import { toast , ToastContainer } from 'react-toastify';
 
 
 
-function IconLink({value , Icon , currentTab = "TimeLine" }) {
+
+function IconLink({value , Icon , currentTab , onClick }) {
     console.log(Icon)
 
     let className = `
     flex items-center 
-            text-sm border-black-100 border-t-[3px] 
+            text-xs border-black-100 border-t-[1px] 
             border-solid py-1 sm:border-r-2 sm:border-t-0
             sm:pr-10
-            hover:text-black hover:text-lg duration-75 cursor-pointer `
+            hover:text-black hover:text-sm duration-75 cursor-pointer  `
     
     className += value.name !== currentTab && " text-gray-400 "
     return (
-            <li className={className}> {Icon({className : "h-6 w-6 text-lg mr-2"})} {value.name} </li>
+            <li onClick={onClick} className={className}> {Icon({className : "h-5 w-5 mr-2"})} {value.name} </li>
     )
 }
 
 
 function HeadSection({user}) {
+    const [currentTab, setcurrentTab] = React.useState("TimeLine")
     const elements = [
         {name : "TimeLine" , icon :  PhotographIcon},
         {name : "About" , icon : UserCircleIcon},
@@ -97,14 +38,17 @@ function HeadSection({user}) {
         {name : "Photos" , icon : PhotographIcon},
     ]
     return (
-        <div>
-            <div className="border-red-100 border-4 border-solid  bg-no-repeat lg:hidden">
-                <img className="w-full max-h-[300px]" src={"/profile-cover.jpg"} />
+        <div className="bg-white">
+            <div className="bg-no-repeat lg:flex   ">
+                <img className="w-full max-h-[300px] lg:h-[200px]" src={user.covPic || "https://via.placeholder.com/728x90.png?text=choose your pic"} />
+                <div className="w-1/2 bg-gray-400"></div>
+
             </div>
 
-            <div className="bg-gray-100 h-[100px] flex  text-black border-4 border-blue-200 border-solid ">
+            <div className=" flex  text-black">
              
-                    <img className="rounded-md h-20 w-20 border-4 border-gray-100 ml-3"   src={"/guy-3.jpg"} />
+                    <img className="rounded-md h-14 w-14 border-4 border-gray-100 ml-3"   src={user.profilePic || `https://eu.ui-avatars.com/api/?name=${user.fullName}`} />
+
 
                     <div style={{
                     }} className="ml-4 flex flex-col pb-3 text-xl  w-full justify-center sm:justify-between ">
@@ -113,13 +57,13 @@ function HeadSection({user}) {
                         <div>2</div>
                         <div>3</div> */}
                         <div>
-                            <h1 className="">Richard Bathiebo</h1>
+                            <h1 className="text-md">{user.fullName}</h1>
                         </div>
 
                         <div className="">
                             <ul style={{
                             }} className="hidden sm:flex justify-between max-w-[500px]">
-                                {elements.map((value) => <IconLink value={value} Icon={value.icon} /> )}                               
+                                {elements.map((value) => <IconLink onClick={(e) => setcurrentTab(value.name)} value={value} currentTab={currentTab} Icon={value.icon} /> )}                               
                             </ul>
                         </div>
 
@@ -134,39 +78,44 @@ function HeadSection({user}) {
 }
 
 
- function AboutSection() {
+ function AboutSection({user}) {
      const elements = [
-         {title : "Date of Birth" , content  : "12 January 1990"},
-         {title : "Job" , content  : "Ninja developer"},
-         {title : "Gender" , content  : "Male"},
-         {title : "Lives in" , content  : "Miami, FL, USA"},
+         {title : "Date of Birth" , content  : user.birthDate},
+         {title : "Job" , content  : user.job },
+         {title : "Gender" , content  : user.gender},
+         {title : "Lives in" , content  : user.livesIn},
      ]
     return (
-        <div className="bg-gray-100 pl-4">
+        <div className="px-4 bg-white mt-5 lg:w-full">
             <h2 className="border-solid border-b-4 border-blue-200">About</h2>
 
-            {elements.map(({title , content}) => {
+            <div className="max-w-[400px]">
+            {elements.map(({title , content , id}) => {
                 
-           return     <div className="py-1">
-                    <p className="text-gray-400 text-sm">{title}</p>
-                    <p className="text-gray-900 text-sm">{content}</p>
-                </div>
-            })}
+                return      <div className="py-2 sm:flex sm:justify-between ">
+                                <p className="text-gray-600 text-xs">{title}</p>
+                                <p className="text-gray-900 text-xs">{content || "Not defined"}</p>
+                            </div>
+                 })}
+
+            </div>
             
         </div>
     )
 }
 
 
- function FriendsSection() {
+ function FriendsSection({user}) {
     return (
-        <div>
-            <h2 className="border-solid border-b-4 border-blue-200">Friends</h2>
+        <div className="px-4 bg-white mt-5 lg:w-full flex-grow-0" >
+            <h2 className="">Friends</h2>
 
-           <div className="flex flex-wrap">
-           {[1,2,3 , 4 ,5 ,6 , 7 , 8].map((value) => {
+           <div className="flex flex-wrap ">
+           {user?.friends?.map((value) => {
                 return <img className="ml-1 mb-1 h-[75px] w-[75px]" src="/guy-3.jpg" />
             })}
+
+            {!user.friends && <h1>No friends yet</h1>}
            </div>
 
             
@@ -177,7 +126,7 @@ function HeadSection({user}) {
 
 function Post() {
     return (
-        <div className="border-solid border-red-900 border-4 px-2 py-2 ">
+        <div className=" px-4 py-2 bg-white mb-5 text-xs">
 
             <div className="flex">
                 <img className="rounded-full h-[50px] w-[50px] mr-4 " src="/guy-3.jpg" />
@@ -188,13 +137,13 @@ function Post() {
             </div>
 
             <img className="w-auto mt-4" src="/profile-cover.jpg" />
-            <p className="text-sm my-4">I took this photo this morning. What do you guys think?</p>
+            <p className="text-xs my-4">I took this photo this morning. What do you guys think?</p>
 
             <div className="flex justify-between ">
                 <div className="flex ">
-                    <button className="flex mr-2"> <ShareIcon className="h-5 w-5 mr-1" /> Share</button>
+                    <button className="flex mr-2"> <ShareIcon className="h-full w-3 mr-1" /> Share</button>
                     <button type="button" class="flex ">
-                    <HeartIcon className="h-5 w-5 mr-1 text-red-600 hover:text-red-700 rounded-lg text-white" /> Like
+                    <HeartIcon className="h-5 w-5 mr-1 text-red-600 hover:text-red-700 rounded-lg" /> Like
             </button>
                 </div>
 
@@ -213,10 +162,33 @@ function Post() {
 
 
  function Posts() {
-    return (
-        <div>
+    const [posts, setposts] = React.useState([])
+    const [loadingPost, setloadingPost] = React.useState(true)
 
-            {[1,2].map((value) => <Post />)}
+    React.useEffect(() => {
+        setloadingPost(true)
+
+        setTimeout(() => {
+
+            setloadingPost(false)
+            
+        }, 4000);
+    }, [])
+
+
+
+    return (
+        <div className=" mt-5">
+
+            
+        <div className="w-full px-4 py-2 bg-white mt-5">
+            {loadingPost && <LoaderComponent /> }
+            {posts?.length === 0 && !loadingPost && <h1> No post yet </h1>}
+        </div>
+
+            {posts?.map((post) => <Post post={post} />)}
+
+        
             
         </div>
     )
@@ -224,11 +196,11 @@ function Post() {
 
 function Comment() {
     return (
-            <div className="flex p-2">
+            <div className="flex p-2 text-xs">
                 <img src='/guy-3.jpg' className="rounded-full h-10 w-10 mr-2" />
                 <div>
                     <h1 className="text-black font-bold">Maria Gonzales</h1>
-                    <p className="text-sm">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>
+                    <p className="">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>
                 </div>
             </div>
     )
@@ -250,7 +222,7 @@ function CommentForm() {
 
 function Footer() {
     return (
-        <div className="p-3 bg-indigo-100">
+        <div className="p-3 bg-white">
 
             <p>
             Copyright © Richard Bathiebo - All rights reserved 
@@ -261,38 +233,76 @@ function Footer() {
 }
 
 
+function LoaderComponent() {
+    return (
+        <div className="w-full flex items-center flex-col">
+        <div className="flex bg-white shadow-md p-4 rounded-md">
+          <div data-placeholder className="mr-2 h-20 w-20 rounded-full overflow-hidden relative bg-gray-200">
+          </div>
+          <div className="flex flex-col justify-between">
+            <div data-placeholder className="mb-2 h-5 w-40 overflow-hidden relative bg-gray-200">
+            </div>
+            <div data-placeholder className="h-10 w-40 overflow-hidden relative bg-gray-200">
+            </div>
+          </div>
+        </div>
+      </div>
+        
+    )
+}
+
+
+
 function Profile() {
     const [user, setUser] = React.useState()
+
     React.useEffect(() => {
         const user = manageJwtToken.getUserFromLocalStorage()
         console.log(user)
+
+        if(!user) return Router.push("/login?from=profile")
+
+        toast(`Vous  êtes bien connecté , ${user?.email}`)
         setUser(user)
         
       }, [])
 
+
+
     return (
         <div>
 
-            <NavBar />
 
             {user && 
 
-                <div>
-                    <HeadSection user={user} />
+               <div className="bg-repeat-y bg-cover" style={{
+                   backgroundImage : "url('/bg-gray.webp')"
+               }}>
 
-                    <AboutSection />
+                    <div className="lg:mx-44 sm:pt-5">
+                        <HeadSection user={user} />
 
-                    <FriendsSection />
+                            <div className="lg:flex">
+                                <div className="lg:mr-6">
+                                    <AboutSection user={user} />
 
-                    <Posts />
+                                    <FriendsSection user={user} />
+                                </div>
 
-                    <Footer />
 
-                    
-                </div>
+                                { <Posts />}
+
+                               
+                            </div>
+
+                     </div>
+                        <Footer />
+
+
+            </div>
             
             }
-            
+            <ToastContainer />
         </div>
     )
 }

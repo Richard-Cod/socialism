@@ -8,10 +8,10 @@ import { KRoutes } from "../constants/KRoutes";
 
 const registerBrain = {
 
-    async makeRegister (email , password ) {
+    async makeRegister (user) {
         console.log("inscription")
     
-        const result = await userRegisterCall({email , password})
+        const result = await userRegisterCall(user)
         if(result){
             console.log("result exists")
             console.log(result)
@@ -30,16 +30,22 @@ const registerBrain = {
                 .required(),
             password: Joi.string().min(3)
                 .required(),
+            
+            fullName: Joi.string().required(),
+            birthDate: Joi.date(),
+            profilePic: Joi.string(),
+            covPic: Joi.string(),
+            
         })
         const { error } = RegisterInputSchema.validate(data);
         return error
     },
 
-    async handleFormSubmit (e , email , password , setIsRegisterIn ) {
+    async handleFormSubmit (e , user, setIsRegisterIn ) {
         e.preventDefault()
         setIsRegisterIn(true)
     
-       const error = registerBrain.validateInput({email, password})
+       const error = registerBrain.validateInput(user)
        if(error) {
         setIsRegisterIn(false)
         const message = error.details[0].message
@@ -47,7 +53,7 @@ const registerBrain = {
         return
        }
     
-       await registerBrain.makeRegister(email , password)
+       await registerBrain.makeRegister(user)
        setIsRegisterIn(false)
     }
 
