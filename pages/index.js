@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import React from 'react'
-import manageJwtToken from '../utils/manageJwtToken'
 
 export default function Home() {
 

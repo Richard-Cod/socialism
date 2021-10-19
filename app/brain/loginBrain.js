@@ -11,15 +11,14 @@ import Router from "next/router";
 
 const loginBrain = {
     async makeLogin (email , password) {
-        console.log("connexion")
         const result = await userLoginCall({email , password})
+        if(!result) return
 
-        if(result){
-            toast("Successfully logged in")
-            console.log("result exists")
-            console.log(result)
-            manageJwtToken.saveTokenToLocalStorage(result.token)
-        }
+        toast("Successfully logged in")
+        console.log(result)
+        manageJwtToken.saveTokenToLocalStorage(result.token)
+        redirectUserAccordingToAuthStatus(result.user)
+        
     },
      validateInput(data) {
         const loginInputSchema = Joi.object({
@@ -35,17 +34,16 @@ const loginBrain = {
         const { error } = loginInputSchema.validate(data);
         return error
     },
-    redirectUserAccordingToAuthStatus(){
-        const user =  manageJwtToken.getUserFromLocalStorage()
-        console.log("user")
-        console.log(user)
+    redirectUserAccordingToAuthStatus(user){
+        // console.log("user")
+        // console.log(user)
 
         if(!user?.verifiedEmail){
             console.log("User mail is not verified")
             return
         }
         if (user){
-            // Router.push("/profile")
+            Router.push("/profile")
             // console.log(user)
             console.log("user mail is verified")
             return

@@ -51,7 +51,7 @@ function Footer({type = AuthTypes.signup}) {
     )
 }
 
-function AuthComponent({type}) {
+function Form({type}) {
     const [fullName, setFullName] = useState("")
     const [email, setEmail] = useState("richard.bathiebo.7@gmail.com")
     const [password, setPassword] = useState()
@@ -60,36 +60,37 @@ function AuthComponent({type}) {
     const [birthDate, setbirthDate] = useState(new Date())
     const [isLoading, setIsLoading] = useState(false)
 
-    function Form() {
-        return (
-            <form 
-            onSubmit={(e) => {
-                if(type === AuthTypes.signin){
-                    registerBrain.handleFormSubmit(e , {
-                        email , password , fullName , covPic , profilePic , birthDate
-                    } , setIsLoading)
-                    return
-                }
-               loginBrain.handleFormSubmit(e , email , password , setIsLoading)
-                
-            }} 
-            > 
-                {type == AuthTypes.signup && <CInput label="Fullname" value={fullName} setValue={setFullName} placeholder="fullname" />}
-                <CInput label="Email" value={email} setValue={setEmail} />
-                <CInput label="Password" type="password" value={password} placeholder="password" setValue={setPassword} />
-                <AgreeWithPolicy />
-                <StateFulButton 
-                    className="btn btn-md btn-primary btn-block" 
-                    isActionIn={isLoading}
-                    title={type === AuthTypes.signup ? "Sign up" : "Sign in"}
-                    type="submit"
-                />
-                {<Footer type={type} />}
-            </form>
-        )
-    }
+    const data = {fullName,email,password,covPic,profilePic,birthDate}
+
+    return (
+        <form 
+        onSubmit={(e) => {
+            if(type === AuthTypes.signup){
+                registerBrain.handleFormSubmit(e , data , setIsLoading)
+                return
+            }
+           loginBrain.handleFormSubmit(e , data.email , data.password , setIsLoading)
+            
+        }} 
+        > 
+            {type == AuthTypes.signup && <CInput label="Fullname" value={fullName} setValue={setFullName} placeholder="fullname" />}
+            <CInput label="Email" value={email} setValue={setEmail} />
+            <CInput label="Password" type="password" value={password} placeholder="password" setValue={setPassword} />
+            <AgreeWithPolicy />
+            <StateFulButton 
+                className="btn btn-md btn-primary btn-block" 
+                isActionIn={isLoading}
+                title={type === AuthTypes.signup ? "Sign up" : "Sign in"}
+                type="submit"
+            />
+            {<Footer type={type} />}
+        </form>
+    )
+}
 
 
+
+function AuthComponent({type}) {
     return (
             <div className="text-center">
                 <div className="mx-auto mt-4" >
@@ -99,7 +100,7 @@ function AuthComponent({type}) {
                                     <AuthTop type={type} />
                                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                                     <OrSignWithCredentials type={type} />
-                                    <Form />
+                                    <Form type={type}/>
                                 </div>
                             </div>
                         </div>

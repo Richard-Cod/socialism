@@ -1,8 +1,8 @@
 import React from 'react'
-import getVerificationEmailCall from '../../utils/getVerificationEmailCall'
 import manageJwtToken from '../../utils/manageJwtToken'
 import { ToastContainer, toast } from 'react-toastify';
         
+import getVerificationEmailCall from "../../app/utils/getVerificationEmailCall"
 function SendEmailVerificationComponent() {
     const handleButtonClick = async (e) => {
         const result = await getVerificationEmailCall()

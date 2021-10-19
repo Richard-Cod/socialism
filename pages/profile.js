@@ -8,13 +8,16 @@ import { HeartIcon } from '@heroicons/react/solid'
 import Router from 'next/dist/client/router'
 
 import { toast , ToastContainer } from 'react-toastify';
+import { connect } from 'react-redux'
+import FileUpload from '../app/components/FileUpload'
+import getFileUrl from '../app/utils/getFileUrl'
+
+
 
 
 
 
 function IconLink({value , Icon , currentTab , onClick }) {
-    console.log(Icon)
-
     let className = `
     flex items-center 
             text-xs border-black-100 border-t-[1px] 
@@ -39,16 +42,28 @@ function HeadSection({user}) {
     ]
     return (
         <div className="bg-white">
+            
+
             <div className="bg-no-repeat lg:flex   ">
-                <img className="w-full max-h-[300px] lg:h-[200px]" src={user.covPic || "https://via.placeholder.com/728x90.png?text=choose your pic"} />
+                <img className="w-full max-h-[300px] lg:h-[200px]" src={getFileUrl(user.covPic) || "https://via.placeholder.com/728x90.png?text=choose your pic"} />
                 <div className="w-1/2 bg-gray-400"></div>
 
             </div>
 
+            <FileUpload type="covPic" title="Set new cov pic" style={{
+                position : "absolute",
+                top : 20,
+                left : 140
+            }} />
+
             <div className=" flex  text-black">
              
-                    <img className="rounded-md h-14 w-14 border-4 border-gray-100 ml-3"   src={user.profilePic || `https://eu.ui-avatars.com/api/?name=${user.fullName}`} />
-
+                    <img className="rounded-md h-14 w-14 border-4 border-gray-100 ml-3"   src={getFileUrl(user.profilePic) || `https://eu.ui-avatars.com/api/?name=${user.fullName}`} />
+                    <FileUpload type="profilePic" title="Set new cov pic" style={{
+                position : "absolute",
+                top : 260,
+                left : 180
+            }} />
 
                     <div style={{
                     }} className="ml-4 flex flex-col pb-3 text-xl  w-full justify-center sm:justify-between ">
@@ -63,7 +78,7 @@ function HeadSection({user}) {
                         <div className="">
                             <ul style={{
                             }} className="hidden sm:flex justify-between max-w-[500px]">
-                                {elements.map((value) => <IconLink onClick={(e) => setcurrentTab(value.name)} value={value} currentTab={currentTab} Icon={value.icon} /> )}                               
+                                {elements.map((value) => <IconLink key={value.name} onClick={(e) => setcurrentTab(value.name)} value={value} currentTab={currentTab} Icon={value.icon} /> )}                               
                             </ul>
                         </div>
 
@@ -71,7 +86,7 @@ function HeadSection({user}) {
                
             </div>
             <ul className="pl-3 sm:hidden">
-                {elements.map((value) => <IconLink value={value} Icon={value.icon} /> )}                               
+                {elements.map((value) => <IconLink key={value.name} value={value} Icon={value.icon} /> )}                               
             </ul>
         </div>
     )
@@ -90,9 +105,9 @@ function HeadSection({user}) {
             <h2 className="border-solid border-b-4 border-blue-200">About</h2>
 
             <div className="max-w-[400px]">
-            {elements.map(({title , content , id}) => {
+            {elements.map(({title , content }) => {
                 
-                return      <div className="py-2 sm:flex sm:justify-between ">
+                return      <div key={title} className="py-2 sm:flex sm:justify-between ">
                                 <p className="text-gray-600 text-xs">{title}</p>
                                 <p className="text-gray-900 text-xs">{content || "Not defined"}</p>
                             </div>
@@ -111,8 +126,8 @@ function HeadSection({user}) {
             <h2 className="">Friends</h2>
 
            <div className="flex flex-wrap ">
-           {user?.friends?.map((value) => {
-                return <img className="ml-1 mb-1 h-[75px] w-[75px]" src="/guy-3.jpg" />
+           {user?.friends?.map((value , index) => {
+                return <img key={index} className="ml-1 mb-1 h-[75px] w-[75px]" src="/guy-3.jpg" />
             })}
 
             {!user.friends && <h1>No friends yet</h1>}
@@ -152,7 +167,7 @@ function Post() {
                 </div>
             </div>
 
-            {[1,2,4].map((value) => <Comment />)}
+            {[1,2,4].map((value , index) => <Comment key={index} />)}
 
             <CommentForm />
             
@@ -253,17 +268,13 @@ function LoaderComponent() {
 
 
 
-function Profile() {
-    const [user, setUser] = React.useState()
+function Profile({user}) {
 
     React.useEffect(() => {
-        const user = manageJwtToken.getUserFromLocalStorage()
-        console.log(user)
-
+        // console.log(user)
         if(!user) return Router.push("/login?from=profile")
 
         toast(`Vous  êtes bien connecté , ${user?.email}`)
-        setUser(user)
         
       }, [])
 
@@ -271,6 +282,7 @@ function Profile() {
 
     return (
         <div>
+
 
 
             {user && 
@@ -307,4 +319,14 @@ function Profile() {
     )
 }
 
-export default Profile
+
+const mapStateToProps = state => ({
+    user: state.user.value
+});
+
+const mapDispatchToProps = {
+};
+
+Profile = connect(mapStateToProps, mapDispatchToProps)(Profile)
+export default Profile;
+
