@@ -1,5 +1,8 @@
 import 'tailwindcss/tailwind.css'
 import 'react-toastify/dist/ReactToastify.css';
+
+import "react-datepicker/dist/react-datepicker.css";
+
 import {Provider} from 'react-redux';
 
 import withRedux from "next-redux-wrapper";

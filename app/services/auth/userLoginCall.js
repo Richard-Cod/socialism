@@ -1,5 +1,5 @@
 import axios from 'axios'
-import handleApiCallErrors from './handleApiCallErrors'
+import handleApiCallErrors from '../../utils/handleApiCallErrors'
 
 
 

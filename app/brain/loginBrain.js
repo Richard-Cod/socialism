@@ -1,5 +1,5 @@
 import manageJwtToken from "../utils/manageJwtToken"
-import userLoginCall from "../utils/userLoginCall"
+import userLoginCall from "../services/auth/userLoginCall"
 
 import { toast } from 'react-toastify';
 import Joi from 'joi'
@@ -7,7 +7,7 @@ import tlds from '/node_modules/@sideway/address/lib/tlds.js'
 
 import Router from "next/router";
 
-
+import {KRoutes} from "../constants/KRoutes"
 
 const loginBrain = {
     async makeLogin (email , password) {
@@ -17,7 +17,7 @@ const loginBrain = {
         toast("Successfully logged in")
         console.log(result)
         manageJwtToken.saveTokenToLocalStorage(result.token)
-        redirectUserAccordingToAuthStatus(result.user)
+        this.redirectUserAccordingToAuthStatus(result.user)
         
     },
      validateInput(data) {
@@ -35,19 +35,20 @@ const loginBrain = {
         return error
     },
     redirectUserAccordingToAuthStatus(user){
-        // console.log("user")
-        // console.log(user)
+        console.log("user")
+        console.log(user)
 
-        if(!user?.verifiedEmail){
+        if(user && !user.verifiedEmail){
             console.log("User mail is not verified")
+            Router.push(KRoutes.verifyemailSend)
             return
         }
-        if (user){
-            Router.push("/profile")
-            // console.log(user)
-            console.log("user mail is verified")
-            return
-        }
+        // if (user){
+        //     Router.push(KRoutes.profile)
+        //     // console.log(user)
+        //     console.log("user mail is verified")
+        //     return
+        // }
     },
     async handleFormSubmit (e , email , password , setIsLoginIn) {
         

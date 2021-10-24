@@ -1,4 +1,5 @@
 import React, { useState  } from 'react'
+import DatePicker from "react-datepicker";
 
 import Link from 'next/Link'
 import registerBrain from '../../brain/registerBrain';
@@ -8,6 +9,7 @@ import AgreeWithPolicy from './AgreeWithPolicy';
 import AuthTypes from '../../constants/AuthTypes';
 import loginBrain from '../../brain/loginBrain';
 import CInput from './CInput';
+import { CakeIcon } from '@heroicons/react/solid';
 
 
 function OrSignWithCredentials({type = AuthTypes.signin}) {
@@ -42,9 +44,20 @@ function AuthTop({type = AuthTypes.signup}) {
 function Footer({type = AuthTypes.signup}) {
     return (
         <div>
-            <Link className="text-blue-900" 
+            <Link 
                 href={type == AuthTypes.signup ? KRoutes.login : KRoutes.register}
-                >{type == AuthTypes.signup ? "Register" : "Log in "}
+                >
+                    <span className="cursor-pointer">
+                        
+                        {type == AuthTypes.signup ?  
+                    
+                    <span> Already have an account ? <span className="text-red-900">  Log in </span> </span> :
+
+                     <span> Don't have an account ? <span className="text-red-900"> Register </span> </span>
+                     
+                     }
+                     
+                     </span>
             </Link>
             <p className="mt-5 mb-3 text-muted">© 2017-2021</p>
         </div>
@@ -54,13 +67,15 @@ function Footer({type = AuthTypes.signup}) {
 function Form({type}) {
     const [fullName, setFullName] = useState("")
     const [email, setEmail] = useState("richard.bathiebo.7@gmail.com")
-    const [password, setPassword] = useState()
+    const [password, setPassword] = useState("")
+    const [passwordConfirmation, setPasswordConfirmation] = useState("")
     const [covPic, setcovPic] = useState()
     const [profilePic, setprofilePic] = useState()
-    const [birthDate, setbirthDate] = useState(new Date())
+    const [gender, setgender] = useState("Male")
+    const [birthdate, setbirthdate] = useState(new Date(2000,1,1))
     const [isLoading, setIsLoading] = useState(false)
 
-    const data = {fullName,email,password,covPic,profilePic,birthDate}
+    const data = {fullName,email,password,covPic,profilePic,gender ,birthdate , passwordConfirmation}
 
     return (
         <form 
@@ -75,7 +90,58 @@ function Form({type}) {
         > 
             {type == AuthTypes.signup && <CInput label="Fullname" value={fullName} setValue={setFullName} placeholder="fullname" />}
             <CInput label="Email" value={email} setValue={setEmail} />
-            <CInput label="Password" type="password" value={password} placeholder="password" setValue={setPassword} />
+            <div className="flex">
+                <CInput className="mr-2" label="Password" type="password" value={password} placeholder="password" setValue={setPassword} />
+                {type == AuthTypes.signup  && <CInput label="Password Confirmation" type="password" value={passwordConfirmation} placeholder="password confirmation" setValue={setPasswordConfirmation} />}
+            </div>
+            {type == AuthTypes.signup && 
+
+            <div className="relative mb-3 flex justify-around">
+
+                <div>
+                    <label className="flex uppercase text-blueGray-600 text-xs font-bold mb-2" htmlFor="grid-password">
+                            <CakeIcon className="h-5 w-h-5 text-red-900 mr-2" />  Birthdate 
+                    </label>
+                    <div className="relative">
+                        <DatePicker
+                        className="w-full border-4 cursor-pointer"
+                            selected={birthdate}
+                            onChange={(date) => setbirthdate(date)}
+                            // selectsStart
+                            startDate={birthdate}
+                            // endDate={endDate}
+                            minDate={new Date(1930, 1, 1)}
+                            maxDate={new Date(2010, 1, 1)}
+                            nextMonthButtonLabel=">"
+                            previousMonthButtonLabel="<"
+                        />
+                    </div>
+                </div> 
+
+
+                <div>
+                    <label className="flex uppercase text-blueGray-600 text-xs font-bold mb-2" htmlFor="grid-password">
+                            <img src="/gender.png" className="h-5 w-5 mr-2" />  Gender 
+                    </label>
+                    <div className="relative inline-block w-full text-gray-700">
+                        <select value={gender} onChange={(e) => setgender(e.target.value)} className="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Regular input">
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>}
+
+
+           
+
+                
             <AgreeWithPolicy />
             <StateFulButton 
                 className="btn btn-md btn-primary btn-block" 

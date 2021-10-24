@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head'
-import NavBar from '../components/Navbar';
+import NavBar from '../components/shared/Navbar';
 import { connect, useSelector } from 'react-redux';
 import manageJwtToken from '../utils/manageJwtToken';
 import { setUser } from '../redux/actions/userActions';
@@ -33,7 +33,7 @@ function PagesLayout({children ,showNavbar=true , ...props}) {
             </Head>
 
             <div>
-                <h1>{JSON.stringify(state)}</h1>
+                <span style={{fontSize : "10px"}}>{JSON.stringify(state)}</span>
             </div>
 
 

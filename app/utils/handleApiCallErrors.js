@@ -24,12 +24,12 @@ const handleApiCallErrors = (error , customErrorsData = {}) => {
         if (typeof customErrorsData[status] == "object"){
             message =  customErrorsData[status][0]  || defaultErrorsData[status]
 
-            customErrorsData[status][1]()
+            customErrorsData[status][1](error.response)
         }else{
             message = customErrorsData[status] || defaultErrorsData[status]
         }
 
-        toast(message)
+       !customErrorsData.handleShowingError && toast(message)
     } else if (error.request) {
         /*
          * The request was made but no response was received, `error.request`
@@ -43,7 +43,7 @@ const handleApiCallErrors = (error , customErrorsData = {}) => {
         // Something happened in setting up the request and triggered an Error
         console.log('Error', error.message);
     }
-    console.log(error);
+    !message  && console.log(error)
 }
 
 export default handleApiCallErrors

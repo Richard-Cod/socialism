@@ -5,6 +5,7 @@ import tlds from '/node_modules/@sideway/address/lib/tlds.js'
 import { toast } from 'react-toastify';
 import Router from "next/router";
 import { KRoutes } from "../constants/KRoutes";
+import { data } from "autoprefixer";
 
 const registerBrain = {
 
@@ -30,11 +31,11 @@ const registerBrain = {
                 .required(),
             password: Joi.string().min(3)
                 .required(),
-            
             fullName: Joi.string().required(),
-            birthDate: Joi.date(),
+            birthdate: Joi.date(),
             profilePic: Joi.string(),
             covPic: Joi.string(),
+            gender: Joi.string().valid('Male', 'Female'),
             
         })
         const { error } = RegisterInputSchema.validate(data);
@@ -44,6 +45,15 @@ const registerBrain = {
     async handleFormSubmit (e , user, setIsRegisterIn ) {
         e.preventDefault()
         setIsRegisterIn(true)
+
+
+        if(user.password !== user.passwordConfirmation){
+            setIsRegisterIn(false)
+            toast("Both passwords are not the same")
+            return
+        }
+        delete user.passwordConfirmation 
+
     
        const error = registerBrain.validateInput(user)
        if(error) {
@@ -52,6 +62,8 @@ const registerBrain = {
         toast(message)
         return
        }
+
+        
     
        await registerBrain.makeRegister(user)
        setIsRegisterIn(false)

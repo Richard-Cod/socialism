@@ -1,16 +1,16 @@
 import React from 'react'
-import manageJwtToken from '../app/utils/manageJwtToken'
 import { UserCircleIcon } from '@heroicons/react/solid'
 import { UserGroupIcon } from '@heroicons/react/solid'
 import { PhotographIcon } from '@heroicons/react/solid'
 import { ShareIcon } from '@heroicons/react/solid'
 import { HeartIcon } from '@heroicons/react/solid'
-import Router from 'next/dist/client/router'
 
 import { toast , ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux'
-import FileUpload from '../app/components/FileUpload'
+import FileUpload from '../app/components/shared/FileUpload'
 import getFileUrl from '../app/utils/getFileUrl'
+import PagesLayout from '../app/layout/PagesLayout'
+import getAllPostsCall from '../app/services/posts/getAllPostsCall'
 
 
 
@@ -41,7 +41,9 @@ function HeadSection({user}) {
         {name : "Photos" , icon : PhotographIcon},
     ]
     return (
-        <div className="bg-white">
+        <div style={{
+            position : "relative"
+        }} className="bg-white">
             
 
             <div className="bg-no-repeat lg:flex   ">
@@ -52,8 +54,8 @@ function HeadSection({user}) {
 
             <FileUpload type="covPic" title="Set new cov pic" style={{
                 position : "absolute",
-                top : 20,
-                left : 140
+                top : 0,
+                left : 0
             }} />
 
             <div className=" flex  text-black">
@@ -61,8 +63,8 @@ function HeadSection({user}) {
                     <img className="rounded-md h-14 w-14 border-4 border-gray-100 ml-3"   src={getFileUrl(user.profilePic) || `https://eu.ui-avatars.com/api/?name=${user.fullName}`} />
                     <FileUpload type="profilePic" title="Set new cov pic" style={{
                 position : "absolute",
-                top : 260,
-                left : 180
+                left : 0
+
             }} />
 
                     <div style={{
@@ -95,10 +97,10 @@ function HeadSection({user}) {
 
  function AboutSection({user}) {
      const elements = [
-         {title : "Date of Birth" , content  : user.birthDate},
-         {title : "Job" , content  : user.job },
+         {title : "Birthdate" , content  : user.birthdate && new Date(user.birthdate).toLocaleDateString()},
+        //  {title : "Job" , content  : user.job },
          {title : "Gender" , content  : user.gender},
-         {title : "Lives in" , content  : user.livesIn},
+        //  {title : "Lives in" , content  : user.livesIn},
      ]
     return (
         <div className="px-4 bg-white mt-5 lg:w-full">
@@ -139,35 +141,38 @@ function HeadSection({user}) {
 }
 
 
-function Post() {
+function Post({post , propUser}) {
     return (
-        <div className=" px-4 py-2 bg-white mb-5 text-xs">
+        <div className=" px-4 pb-2 bg-white mb-5 text-xs">
 
             <div className="flex">
-                <img className="rounded-full h-[50px] w-[50px] mr-4 " src="/guy-3.jpg" />
+                <img className="rounded-full h-[50px] w-[50px] mr-4 " src={getFileUrl(propUser.profilePic)} />
                 <div>
-                    <h1 className="text-blue-900">John Bressdkjskdjbsk</h1>
-                    <h1 className="text-gray-500">Shared 7:30 PM today</h1>
+                    <h1 className="text-blue-900">{propUser.fullName}</h1>
+                    <h1 className="text-gray-500">Shared {new Date(propUser.createdAt).toLocaleDateString()}</h1>
                 </div>
             </div>
 
-            <img className="w-auto mt-4" src="/profile-cover.jpg" />
-            <p className="text-xs my-4">I took this photo this morning. What do you guys think?</p>
+            
+            {post.images && <img className="w-auto max-h-[300px] mx-auto mt-1" src={getFileUrl(post.images[0])} /> }
+    <p className="text-xs my-4">{post.content}</p>
 
             <div className="flex justify-between ">
                 <div className="flex ">
                     <button className="flex mr-2"> <ShareIcon className="h-full w-3 mr-1" /> Share</button>
-                    <button type="button" class="flex ">
+                    <button type="button" className="flex ">
                     <HeartIcon className="h-5 w-5 mr-1 text-red-600 hover:text-red-700 rounded-lg" /> Like
             </button>
                 </div>
 
                 <div className=''>
-                127 likes - 3 comments
+                {post.likes.length} likes - {post.comments.length} comments
                 </div>
             </div>
 
-            {[1,2,4].map((value , index) => <Comment key={index} />)}
+            {post.comments.map((value , index) => <Comment key={index} />)}
+
+            {post.comments.length === 0 && <h1 className="text-xs text-center text-gray-400">No comment yet</h1>}
 
             <CommentForm />
             
@@ -176,24 +181,32 @@ function Post() {
 }
 
 
- function Posts() {
+ function Posts({user}) {
     const [posts, setposts] = React.useState([])
-    const [loadingPost, setloadingPost] = React.useState(true)
+    const [loadingPost, setloadingPost] = React.useState(false)
 
     React.useEffect(() => {
-        setloadingPost(true)
 
-        setTimeout(() => {
+        const asyncFunc = async () => {
+            setloadingPost(true)
 
+            const result = await getAllPostsCall()
+            console.log(result)
+
+            if(result){
+                setposts(result)
+            }
             setloadingPost(false)
-            
-        }, 4000);
+        }
+
+        asyncFunc()
+
     }, [])
 
 
 
     return (
-        <div className=" mt-5">
+        <div className="w-full mt-5">
 
             
         <div className="w-full px-4 py-2 bg-white mt-5">
@@ -201,7 +214,7 @@ function Post() {
             {posts?.length === 0 && !loadingPost && <h1> No post yet </h1>}
         </div>
 
-            {posts?.map((post) => <Post post={post} />)}
+            {posts?.map((post) => <Post key={post._id} post={post} propUser={user} />)}
 
         
             
@@ -237,7 +250,7 @@ function CommentForm() {
 
 function Footer() {
     return (
-        <div className="p-3 bg-white">
+        <div className="p-3 bg-red-900 mt-auto">
 
             <p>
             Copyright © Richard Bathiebo - All rights reserved 
@@ -270,59 +283,61 @@ function LoaderComponent() {
 
 function Profile({user}) {
 
-    React.useEffect(() => {
-        // console.log(user)
-        if(!user) return Router.push("/login?from=profile")
+    // React.useEffect(() => {
+    //     console.log("state" , user)
+    //     // if(!user) return Router.push("/login?from=profile")
 
-        toast(`Vous  êtes bien connecté , ${user?.email}`)
+    //     toast(`Vous  êtes bien connecté , ${user?.email}`)
         
-      }, [])
-
-
+    //   }, [])
 
     return (
-        <div>
+      <PagesLayout>
+            <div>
+
+{user && 
+
+   <div className="bg-repeat-y bg-cover " style={{
+       backgroundImage : "url('/bg-gray.webp')",
+       height : "100vh"
+   }}>
+
+        <div className="lg:mx-44 sm:pt-5 min-h-[100vh] ">
+            <HeadSection user={user} />
+
+                <div className="lg:flex">
+                    <div className="lg:mr-6 lg:min-w-[40%]">
+                        <AboutSection user={user} />
+
+                        <FriendsSection user={user} />
+                    </div>
 
 
+                    { <Posts user={user} />}
 
-            {user && 
+                   
+                </div>
 
-               <div className="bg-repeat-y bg-cover" style={{
-                   backgroundImage : "url('/bg-gray.webp')"
-               }}>
-
-                    <div className="lg:mx-44 sm:pt-5">
-                        <HeadSection user={user} />
-
-                            <div className="lg:flex">
-                                <div className="lg:mr-6">
-                                    <AboutSection user={user} />
-
-                                    <FriendsSection user={user} />
-                                </div>
+         </div>
+            <Footer />
 
 
-                                { <Posts />}
+</div>
 
-                               
-                            </div>
+}
+<ToastContainer />
+</div>
 
-                     </div>
-                        <Footer />
-
-
-            </div>
-            
-            }
-            <ToastContainer />
-        </div>
+      </PagesLayout>
     )
 }
 
 
-const mapStateToProps = state => ({
-    user: state.user.value
-});
+const mapStateToProps = state => {
+   return ({
+        user: state.user.value
+    })
+};
 
 const mapDispatchToProps = {
 };

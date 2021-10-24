@@ -10,7 +10,6 @@ const getVerificationEmailCall = async (code) => {
     if(!token) return
 
 
-    console.log(token)
     const config = {
     headers: { 
         "token" : token, 
@@ -21,6 +20,7 @@ const getVerificationEmailCall = async (code) => {
         
         const response = await axios.post(url , {code} , config)
         console.log("response " , response)
+        manageJwtToken.saveTokenToLocalStorage(response.data.token)
         return response.data
     } catch (error) {
         const callback404 = (message) => {

@@ -1,6 +1,10 @@
 import React from 'react'
 
 import { MenuIcon } from '@heroicons/react/solid'
+import manageJwtToken from '../../utils/manageJwtToken'
+import Link from 'next/Link'
+import { KRoutes } from '../../constants/KRoutes'
+
 
 function MobileButtonNav({...props}) {
     const [showContent, setshowContent] = React.useState(false)
@@ -25,7 +29,7 @@ function MobileButtonNav({...props}) {
         <div  className="py-1 " role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
             
             {element.map((value) => 
-            <a href="#" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
+            <a key={value.name} href="#" className="block block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-100 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
             <span className="flex flex-col">
                 <span>
                     {value.name} 
@@ -33,6 +37,10 @@ function MobileButtonNav({...props}) {
             </span>
         </a>
         )}
+        <li className="cursor-pointer" onClick={(e) => {
+                        manageJwtToken.removeTokenFromLocalStorage()
+                        window.location.reload()
+                    }}>Deconnexion</li>
         </div>
 
     </div>
@@ -44,19 +52,25 @@ function NavBar() {
     return (
         <nav className="bg-gray-100 py-3 px-5 flex">
 
-            <div>
-             <h1 className="border-solid border-2">DayDay</h1>
-            </div>
+            <Link href="/">
+                <div className="cursor-pointer">
+                <h1 className="border-solid border-2">DayDay</h1>
+                </div>
+            </Link>
             <div className="menu  ml-auto  w-1/2  max-w-[400px]">
 
                 <ul className="hidden justify-between  md:flex">
-                    <li className="cursor-pointer">Profile</li>
-                    <li className="cursor-pointer">Home</li>
-                    <li className="cursor-pointer">Pages</li>
-                    <li className="cursor-pointer" onClick={(e) => {
+                    {/* <Link href={KRoutes.profile}>dekndk</Link> */}
+                    {/* <Link href={KRoutes.profile}> <li className="cursor-pointer">Profile</li> </Link> */}
+
+                    {/* <Link href={KRoutes.home}> <li className="cursor-pointer">Home</li> </Link>
+                    <Link href={KRoutes.home}> <li className="cursor-pointer">Pages</li> </Link>
+                     <li className="cursor-pointer" onClick={(e) => {
                         manageJwtToken.removeTokenFromLocalStorage()
                         window.location.reload()
-                    }}>Deconnexion</li>
+                    }}>Deconnexion</li> */}
+
+                    
                 </ul>
 
                 <MobileButtonNav />

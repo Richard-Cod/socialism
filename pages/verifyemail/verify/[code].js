@@ -1,10 +1,8 @@
 import React from 'react'
-import verifyEmailCall from '../../../utils/verifyEmailCall'
-import manageJwtToken from '../../../utils/manageJwtToken'
+import verifyEmailCall from "../../../app/utils/verifyEmailCall"
 import { ToastContainer, toast } from 'react-toastify';
 import {  useRouter } from 'next/router';
 import Router from "next/router";
-import loginBrain from '../../../brain/loginBrain';
 
         
 function SendEmailVerificationComponent() {

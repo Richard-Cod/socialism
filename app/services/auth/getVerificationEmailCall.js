@@ -1,6 +1,6 @@
-import handleApiCallErrors from './handleApiCallErrors';
+import handleApiCallErrors from '../../utils/handleApiCallErrors';
 import axios from 'axios'
-import manageJwtToken from './manageJwtToken';
+import manageJwtToken from '../../utils/manageJwtToken';
 import Router from 'next/router';
 
 const url = "http://localhost:8080/api/users/verifyEmail/send"
