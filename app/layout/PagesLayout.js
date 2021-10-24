@@ -13,8 +13,6 @@ function PagesLayout({children ,showNavbar=true , ...props}) {
     const state = useSelector(state => state)
 
     useEffect(() => {
-        // console.log(props)
-        // console.log(state)
     }, [state])
 
 
@@ -32,9 +30,9 @@ function PagesLayout({children ,showNavbar=true , ...props}) {
               <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
             </Head>
 
-            <div>
+            {/* <div>
                 <span style={{fontSize : "10px"}}>{JSON.stringify(state)}</span>
-            </div>
+            </div> */}
 
 
             {showNavbar && <NavBar /> }

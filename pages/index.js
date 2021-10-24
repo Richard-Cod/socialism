@@ -1,9 +1,11 @@
 import Head from 'next/head'
 import React from 'react'
+import { connect } from 'react-redux'
+import Posts from '../app/components/ProfilePage/Posts'
 import PostForm from '../app/components/shared/PostForm'
 import PagesLayout from '../app/layout/PagesLayout'
 
-export default function Home() {
+function Home({user}) {
 
   
   return (
@@ -14,12 +16,49 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-        <div className="w-72 border-4 border-blue-900">
+
+      <div className="flex">
+
+      <div className="w-[25%] border-4 border-blue-900">
          <PostForm />
         </div>
+
+
+
+          <div className="w-1/2 mx-2">
+
+            <Posts />
+
+          </div>
+
+          <div className="w-[25%] border-4 border-blue-900">
+           <PostForm />
+           </div>
+
+
+      </div>
+
+
+      
+
+        
 
        
     </div>
    </PagesLayout>
   )
 }
+
+
+
+const mapStateToProps = state => {
+  return ({
+       user: state.user.value
+   })
+};
+
+const mapDispatchToProps = {
+};
+
+Home = connect(mapStateToProps, mapDispatchToProps)(Home)
+export default Home;

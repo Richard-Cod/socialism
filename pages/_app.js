@@ -2,6 +2,7 @@ import 'tailwindcss/tailwind.css'
 import 'react-toastify/dist/ReactToastify.css';
 
 import "react-datepicker/dist/react-datepicker.css";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import {Provider} from 'react-redux';
 
