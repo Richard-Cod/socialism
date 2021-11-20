@@ -14,7 +14,7 @@ const registerBrain = {
     
         const result = await userRegisterCall(user)
         if(result){
-            console.log("result exists")
+            console.log("result xists")
             console.log(result)
             toast("Successfult registered")
             manageJwtToken.saveTokenToLocalStorage(result.token)
