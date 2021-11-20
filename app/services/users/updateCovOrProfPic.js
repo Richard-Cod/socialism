@@ -15,11 +15,7 @@ const updateCovOrProfilPic = async (type , file , filename) => {
 
         const res = await axios.post(
           "http://localhost:8080/api/users/upload/"+type,
-          formData , {
-              headers : {
-                  token : manageJwtToken.getTokenFromLocalStorage()
-              }
-          }
+          formData 
         );
         manageJwtToken.saveTokenToLocalStorage(res.data.token)
         location.reload()

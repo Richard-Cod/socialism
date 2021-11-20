@@ -1,7 +1,6 @@
 import React from 'react'
 import { HeartIcon } from '@heroicons/react/solid'
-import likePostCall from '../../services/posts/likePostCall'
-import dislikePostCall from '../../services/posts/dislikePostCall'
+import likeDislikePostCall from '../../services/posts/LikeDislikeCall'
 
 function LikeDislikeButton({post , propUser , setpost}) {
     const isLiked = () => post.likes.find((like) => like.userId === propUser._id)
@@ -13,7 +12,8 @@ function LikeDislikeButton({post , propUser , setpost}) {
     }
 
     const likeOnBackend = async () => {
-        await likePostCall({likeurId : propUser._id , postId : post._id})
+        await likeDislikePostCall({likeurId : propUser._id , postId : post._id} , 'like')
+
     }
 
     const handleLike = async () => {
@@ -27,7 +27,7 @@ function LikeDislikeButton({post , propUser , setpost}) {
         return
     }
     const dislikeOnBackend = async () => {
-        await dislikePostCall({likeurId : propUser._id , postId : post._id})
+        await likeDislikePostCall({likeurId : propUser._id , postId : post._id} , 'dislike')
     }
     const handleDislike = async () => {
         await dislikeOnBackend()

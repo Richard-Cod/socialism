@@ -1,28 +1,7 @@
-import axios from 'axios'
-import handleApiCallErrors from '../../utils/handleApiCallErrors'
-import manageJwtToken from '../../utils/manageJwtToken'
+import makeRequest from '../makeRequest'
 
 
-
-const likeDislikePostCall = async (data , type) => {
-
+export default async (data , type) => {
     if(type !== "like" && type !== "dislike") return 
-
-    console.log(data)
-
-    try {
-        const config = {
-            headers: { 
-                "token" : manageJwtToken.getTokenFromLocalStorage(), 
-            },
-        };
-
-        const api = "http://localhost:8080/api/posts/"+type
-        const response = await axios.put(api , data , config)
-        return response.data
-        
-    }  catch (error) {
-        handleApiCallErrors(error)
-    }
+    return makeRequest("/posts/"+type , "put" , data)
 }
-export default likeDislikePostCall

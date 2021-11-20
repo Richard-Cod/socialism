@@ -5,19 +5,8 @@ import Router from 'next/router';
 
 const url = "http://localhost:8080/api/users/verifyEmail/send"
 const getVerificationEmailCall = async () => {
-    const token = manageJwtToken.getTokenFromLocalStorage()
-    const user = manageJwtToken.getUserFromLocalStorage()
-    console.log(user)
-    if(!token) return
-    
-    const config = {
-    headers: { 
-        "token" : token, 
-    },
-    };
-
     try {
-        const response = await axios.post(url , {} , config)
+        const response = await axios.post(url)
         console.log("response " , response)
         return response.data
     } catch (error) {
@@ -33,3 +22,5 @@ const getVerificationEmailCall = async () => {
 }
 
 export default getVerificationEmailCall
+
+
